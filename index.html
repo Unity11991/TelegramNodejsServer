@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tap to Earn</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+        }
+        button {
+            padding: 20px;
+            font-size: 24px;
+            margin: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Tap to Earn Points!</h1>
+    <button id="tapButton">Tap Me!</button>
+    <p id="score">Points: 0</p>
+
+    <script>
+        let points = 0;
+        const button = document.getElementById('tapButton');
+        const scoreDisplay = document.getElementById('score');
+
+        button.addEventListener('click', () => {
+            points += 1;
+            scoreDisplay.textContent = `Points: ${points}`;
+            sendPoints(points);
+        });
+
+        function sendPoints(points) {
+            fetch('https://your-server.com/update_points', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ points: points, user_id: 'USER_ID' })  // Replace 'USER_ID' with the actual user ID
+            });
+        }
+    </script>
+</body>
+</html>
