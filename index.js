@@ -11,7 +11,7 @@ const bot = new TelegramBot(process.env.BOT_TOKEN || "", { polling: true });
 
 const port = process.env.PORT || 5000;
 
-const SCORE_TOKEN = "9304273185".split(";").map((t) => BigInt(t));
+const SCORE_TOKEN = "".split(";").map((t) => BigInt(t));
 
 const queries = {};
 
