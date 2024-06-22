@@ -7,7 +7,7 @@ const gameName = "ZuraTap";
 const webURL = "https://sawanchouhan.itch.io/zuratap";
 
 const server = express();
-const bot = new TelegramBot(process.env.BOT_TOKEN || "7028137882:AAFfpa6V2d9JpGkRJJaTG4uLhp5PNMkCTTY", { polling: true });
+const bot = new TelegramBot(process.env.BOT_TOKEN || "", { polling: true });
 
 const port = process.env.PORT || 5000;
 
