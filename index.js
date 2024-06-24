@@ -4,7 +4,7 @@ const path = require("path");
 const TelegramBot = require("node-telegram-bot-api");
 
 const gameName = "ZuraTap";
-const webURL = "https://hackrunv3.s3.ap-south-1.amazonaws.com/index.html";
+const webURL = "hackrunv3.s3.ap-south-1.amazonaws.com";
 
 const server = express();
 const bot = new TelegramBot("7439126507:AAFsGlejIE1CMyMWr-qlIbLFvIT9BGp02lA" || "", { polling: true });
