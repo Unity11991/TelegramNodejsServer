@@ -2136,7 +2136,7 @@ var playerid = url.searchParams.get("id");
 
             // Submit highscore to Telegram
             var xmlhttp = new XMLHttpRequest();
-            var url = "https://YOUR_URL_HERE/highscore/" + distance  + "?id=" + playerid;
+            var url = "https://telegram-nodejs-server-nnbteke3v.vercel.app/highscore/" + distance  + "?id=" + playerid;
 
             xmlhttp.open("GET", url, true);
             xmlhttp.send();
