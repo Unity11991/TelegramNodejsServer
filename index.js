@@ -43,7 +43,7 @@ bot.on("callback_query", function (query) {
     );
   } else {
     queries[query.id] = query;
-    const gameurl = `https://hackrunv3.s3.ap-south-1.amazonaws.com/index.html?id=${query.id}`;
+    const gameurl = https://hackrunv3.s3.ap-south-1.amazonaws.com/index.html?id=${query.id};
     bot.answerCallbackQuery(query.id, { url: gameurl });
   }
 });
@@ -107,5 +107,5 @@ server.get("/highscore/:score", function (req, res, next) {
 });
 
 server.listen(port, (req, res) => {
-  console.log("Server is running.")
+  console.log('server is running on port')
 });
