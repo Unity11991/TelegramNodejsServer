@@ -106,4 +106,6 @@ server.get("/highscore/:score", function (req, res, next) {
   }
 });
 
-server.listen(port);
+server.listen(port, (req, res) => {
+  console.log("Server is running.")
+});
