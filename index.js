@@ -4,7 +4,7 @@ const path = require("path");
 const TelegramBot = require("node-telegram-bot-api");
 
 const gameName = "zuratap";
-const webURL = "http://20.62.94.56/index.html";
+const webURL = "http://20.62.94.56:8080/index.html";
 
 const server = express();
 const bot = new TelegramBot(process.env.BOT_TOKEN || "7461446719:AAHQLQxYUG_OgxCI8XKD_l05sm06HK8uLKw", { polling: true });
@@ -43,7 +43,7 @@ bot.on("callback_query", function (query) {
     );
   } else {
     queries[query.id] = query;
-    const gameurl = `http://20.62.94.56/index.html?id=${query.id}`;
+    const gameurl = `http://20.62.94.56:8080/index.html?id=${query.id}`;
     bot.answerCallbackQuery(query.id, { url: gameurl });
   }
 });
