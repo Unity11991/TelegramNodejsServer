@@ -7,7 +7,7 @@ const gameName = "zuratap";
 const webURL = "https://hackrunv3.s3.ap-south-1.amazonaws.com/index.html";
 
 const server = express();
-const bot = new TelegramBot(process.env.BOT_TOKEN  "7461446719:AAHQLQxYUG_OgxCI8XKD_l05sm06HK8uLKw", { polling: true });
+const bot = new TelegramBot(process.env.BOT_TOKEN || "7461446719:AAHQLQxYUG_OgxCI8XKD_l05sm06HK8uLKw", { polling: true });
 
 const port = process.env.PORT  5000;
 
