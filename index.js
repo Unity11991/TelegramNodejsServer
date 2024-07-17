@@ -12,15 +12,15 @@ const bot = new TelegramBot(process.env.BOT_TOKEN || "7439126507:AAFsGlejIE1CMyM
 const port = process.env.PORT || 8080;
 
 const SCORE_TOKEN = [
-  32452843n,
-  49979687n,
-  67867979n,
-  86028121n,
-  104395303n,
-  122949829n,
-  141650939n,
-  160481183n,
-  179424673n
+  32452843,
+  49979687,
+  67867979,
+  86028121,
+  104395303,
+  122949829,
+  141650939,
+  160481183,
+  179424673
 ];
 
 const queries = {};
