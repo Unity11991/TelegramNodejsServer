@@ -67,10 +67,21 @@ bot.on("inline_query", function (iq) {
 server.use(express.static(path.join(__dirname, "public")));
 
 server.get("/highscore/:score", function (req, res, next) {
-  if (!Object.hasOwnProperty.call(queries, req.query.id)) return next();
+  console.log("Received highscore request");
+  console.log("Request params:", req.params);
+  console.log("Request query:", req.query);
 
-  const token = SCORE_TOKEN[addAllNumbers(BigInt(req.query.id)) - 1];
+  if (!Object.hasOwnProperty.call(queries, req.query.id)) {
+    console.log("Invalid query ID");
+    return next();
+  }
 
+  const tokenIndex = addAllNumbers(BigInt(req.query.id)) - 1;
+  if (tokenIndex < 0 || tokenIndex >= SCORE_TOKEN.length) {
+    console.log("Invalid token index:", tokenIndex);
+    return res.status(400).send("Invalid token index");
+  }
+  const token = SCORE_TOKEN[tokenIndex];
   let query = queries[req.query.id];
 
   let options;
@@ -86,20 +97,21 @@ server.get("/highscore/:score", function (req, res, next) {
   }
 
   // ===== Obfuscation decoding starts =====
-  // Change this part if you want to use your own obfuscation method
   const obfuscatedScore = BigInt(req.params.score);
-
+  console.log("Obfuscated score:", obfuscatedScore);
   const realScore = Math.round(Number(obfuscatedScore / token));
+  console.log("Real score:", realScore);
 
-  // If the score is valid
   if (BigInt(realScore) * token == obfuscatedScore) {
     // ===== Obfuscation decoding ends =====
     bot
       .setGameScore(query.from.id, realScore, options)
       .then((b) => {
+        console.log("Score added successfully");
         return res.status(200).send("Score added successfully");
       })
       .catch((err) => {
+        console.error("Error setting game score:", err);
         if (
           err.response.body.description ===
           "Bad Request: BOT_SCORE_NOT_MODIFIED"
@@ -108,13 +120,15 @@ server.get("/highscore/:score", function (req, res, next) {
             .status(204)
             .send("New score is inferior to user's previous one");
         } else {
-          return res.status(500);
+          return res.status(500).send("An error occurred");
         }
       });
-    return;
   } else {
-    return res.status(400).send("Are you cheating ?");
+    console.log("Obfuscation validation failed");
+    return res.status(400).send("Are you cheating?");
   }
 });
 
-server.listen(port);
+server.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
+});
