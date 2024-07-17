@@ -76,15 +76,12 @@ server.get("/highscore/:score", function (req, res, next) {
     return next();
   }
 
-  const tokenIndex = addAllNumbers(BigInt(req.query.id)) - 1;
-  if (tokenIndex < 0 || tokenIndex >= SCORE_TOKEN.length) {
-    console.log("Invalid token index:", tokenIndex);
-    return res.status(400).send("Invalid token index");
-  }
-  const token = SCORE_TOKEN[tokenIndex];
-  let query = queries[req.query.id];
+  // Parse the score directly (no obfuscation)
+  const realScore = parseInt(req.params.score, 10);
 
+  let query = queries[req.query.id];
   let options;
+
   if (query.message) {
     options = {
       chat_id: query.message.chat.id,
@@ -96,37 +93,21 @@ server.get("/highscore/:score", function (req, res, next) {
     };
   }
 
-  // ===== Obfuscation decoding starts =====
-  const obfuscatedScore = BigInt(req.params.score);
-  console.log("Obfuscated score:", obfuscatedScore);
-  const realScore = Math.round(Number(obfuscatedScore / token));
-  console.log("Real score:", realScore);
-
-  if (BigInt(realScore) * token == obfuscatedScore) {
-    // ===== Obfuscation decoding ends =====
-    bot
-      .setGameScore(query.from.id, realScore, options)
-      .then((b) => {
-        console.log("Score added successfully");
-        return res.status(200).send("Score added successfully");
-      })
-      .catch((err) => {
-        console.error("Error setting game score:", err);
-        if (
-          err.response.body.description ===
-          "Bad Request: BOT_SCORE_NOT_MODIFIED"
-        ) {
-          return res
-            .status(204)
-            .send("New score is inferior to user's previous one");
-        } else {
-          return res.status(500).send("An error occurred");
-        }
-      });
-  } else {
-    console.log("Obfuscation validation failed");
-    return res.status(400).send("Are you cheating?");
-  }
+  // Set the game score
+  bot
+    .setGameScore(query.from.id, realScore, options)
+    .then(() => {
+      console.log("Score added successfully");
+      return res.status(200).send("Score added successfully");
+    })
+    .catch((err) => {
+      console.error("Error setting game score:", err);
+      if (err.response.body.description === "Bad Request: BOT_SCORE_NOT_MODIFIED") {
+        return res.status(204).send("New score is inferior to user's previous one");
+      } else {
+        return res.status(500).send("An error occurred");
+      }
+    });
 });
 
 server.listen(port, () => {
