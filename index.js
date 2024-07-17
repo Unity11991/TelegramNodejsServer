@@ -7,7 +7,7 @@ const gameName = "zuratap";
 const webURL = "http://20.62.94.56:8080/index.html";
 
 const server = express();
-const bot = new TelegramBot(process.env.BOT_TOKEN || "7461446719:AAHQLQxYUG_OgxCI8XKD_l05sm06HK8uLKw", { polling: true });
+const bot = new TelegramBot(process.env.BOT_TOKEN || "7439126507:AAFsGlejIE1CMyMWr-qlIbLFvIT9BGp02lA", { polling: true });
 
 const port = process.env.PORT || 8080;
 
