@@ -70,6 +70,7 @@ server.get("/highscore/:score", function (req, res, next) {
   if (!Object.hasOwnProperty.call(queries, req.query.id)) return next();
 
   const token = SCORE_TOKEN[addAllNumbers(BigInt(req.query.id)) - 1];
+
   let query = queries[req.query.id];
 
   let options;
@@ -85,14 +86,17 @@ server.get("/highscore/:score", function (req, res, next) {
   }
 
   // ===== Obfuscation decoding starts =====
+  // Change this part if you want to use your own obfuscation method
   const obfuscatedScore = BigInt(req.params.score);
+
   const realScore = Math.round(Number(obfuscatedScore / token));
 
+  // If the score is valid
   if (BigInt(realScore) * token == obfuscatedScore) {
     // ===== Obfuscation decoding ends =====
     bot
       .setGameScore(query.from.id, realScore, options)
-      .then(() => {
+      .then((b) => {
         return res.status(200).send("Score added successfully");
       })
       .catch((err) => {
@@ -104,14 +108,13 @@ server.get("/highscore/:score", function (req, res, next) {
             .status(204)
             .send("New score is inferior to user's previous one");
         } else {
-          return res.status(500).send("An error occurred");
+          return res.status(500);
         }
       });
+    return;
   } else {
-    return res.status(400).send("Are you cheating?");
+    return res.status(400).send("Are you cheating ?");
   }
 });
 
-server.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-});
+server.listen(port);
