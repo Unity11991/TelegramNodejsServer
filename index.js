@@ -110,6 +110,25 @@ server.get("/highscore/:score", function (req, res, next) {
     });
 });
 
+server.get("/getHighScore/:userId", function (req, res) {
+  const userId = req.params.userId;
+
+  bot.getGameHighScores({ user_id: userId, chat_id: null, message_id: null })
+    .then((highScores) => {
+      if (highScores && highScores.length > 0) {
+        console.log(`Highscore for user ${userId}:`, highScores[0].score);
+        res.status(200).send(`Highscore for user ${userId}: ${highScores[0].score}`);
+      } else {
+        console.log(`No highscore found for user ${userId}`);
+        res.status(404).send(`No highscore found for user ${userId}`);
+      }
+    })
+    .catch((err) => {
+      console.error("Error retrieving highscore:", err);
+      res.status(500).send("An error occurred while retrieving the highscore");
+    });
+});
+
 server.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
