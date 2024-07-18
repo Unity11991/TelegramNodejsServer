@@ -90,25 +90,41 @@ server.get("/highscore/:score", function (req, res, next) {
   } else {
     options = {
       inline_message_id: query.inline_message_id,
+      force: true,
     };
   }
 
   // Set the game score
-  bot
-    .setGameScore(query.from.id, realScore, options)
+  bot.setGameScore(query.from.id, realScore, options)
     .then(() => {
       console.log("Score added successfully");
-      return res.status(200).send("Score added successfully");
+
+      // Now retrieve the updated high score
+        bot.getGameHighScores(parseInt(query.from.id), options)
+        .then((highScores) => {
+          if (highScores && highScores.length > 0) {
+            console.log(`Updated Highscore for user ${query.from.id}:`, highScores[0].score);
+            res.status(200).send(`Updated Highscore for user ${query.from.id}: ${highScores[0].score}`);
+          } else {
+            console.log(`No highscore found for user ${query.from.id}`);
+            res.status(404).send(`No highscore found for user ${query.from.id}`);
+          }
+        })
+        .catch((err) => {
+          console.error("Error retrieving highscore after setting score:", err);
+          res.status(500).send("An error occurred while retrieving the highscore after setting the score");
+        });
     })
     .catch((err) => {
       console.error("Error setting game score:", err);
       if (err.response.body.description === "Bad Request: BOT_SCORE_NOT_MODIFIED") {
         return res.status(204).send("New score is inferior to user's previous one");
       } else {
-        return res.status(500).send("An error occurred");
+        return res.status(500).send("An error occurred while setting the score");
       }
     });
 });
+
 
 server.get("/getHighScore/:userId", function (req, res) {
   const userId = req.params.userId;
