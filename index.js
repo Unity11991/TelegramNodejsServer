@@ -64,6 +64,8 @@ bot.on("inline_query", function (iq) {
   ]).catch(err => console.error('Error answering inline query:', err));
 });
 
+server.use(express.static(path.join(__dirname, "public")));
+
 server.get("/highscore/:score", function (req, res, next) {
   console.log("Received highscore request");
   console.log("Request params:", req.params);
@@ -74,8 +76,8 @@ server.get("/highscore/:score", function (req, res, next) {
     return next();
   }
 
-  // Parse the new score directly (no obfuscation)
-  const newScore = parseInt(req.params.score, 10);
+  // Parse the score directly (no obfuscation)
+  const realScore = parseInt(req.params.score, 10);
 
   let query = queries[req.query.id];
   let options;
@@ -91,31 +93,22 @@ server.get("/highscore/:score", function (req, res, next) {
     };
   }
 
-  // Retrieve the current high score
-  bot.getGameHighScores({ user_id: query.from.id, chat_id: options.chat_id, message_id: options.message_id })
-    .then((highScores) => {
-      const currentHighScore = highScores && highScores.length > 0 ? highScores[0].score : 0;
-
-      // Calculate the new overall high score
-      const overallHighScore = currentHighScore + newScore;
-
-      // Set the new overall high score
-      bot.setGameScore(query.from.id, overallHighScore, options)
-        .then(() => {
-          console.log("Score added successfully");
-          res.status(200).send("Score added successfully");
-        })
-        .catch((err) => {
-          console.error("Error setting game score:", err);
-          res.status(500).send("An error occurred");
-        });
+  // Set the game score
+  bot
+    .setGameScore(query.from.id, realScore, options)
+    .then(() => {
+      console.log("Score added successfully");
+      return res.status(200).send("Score added successfully");
     })
     .catch((err) => {
-      console.error("Error retrieving highscore:", err);
-      res.status(500).send("An error occurred while retrieving the highscore");
+      console.error("Error setting game score:", err);
+      if (err.response.body.description === "Bad Request: BOT_SCORE_NOT_MODIFIED") {
+        return res.status(204).send("New score is inferior to user's previous one");
+      } else {
+        return res.status(500).send("An error occurred");
+      }
     });
 });
-
 
 server.get("/getHighScore/:userId", function (req, res) {
   const userId = req.params.userId;
